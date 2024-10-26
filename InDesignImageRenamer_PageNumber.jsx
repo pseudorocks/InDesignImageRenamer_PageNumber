@@ -3,8 +3,7 @@
 // var debugFile = new File(File($.fileName).parent + "/debug_log.txt"); // Location of the debug file in the script directory
 // debugFile.open("w"); // Open the file in write mode
 // debugFile.writeln("Debug Log - InDesign Image Rename Script");
-// debugFile.writeln("=====================================
-");
+// debugFile.writeln("=====================================\n");
 
 // Function to format the page number with leading zeros and prefix
 function formatPageNumber(pageNumber) {
@@ -36,7 +35,7 @@ if (app.selection.length === 0) {
         } else if (item.allGraphics && item.allGraphics.length > 0) {
             graphic = item.allGraphics[0];
         } else {
-            // debugFile.writeln("Error: The selected object is not a valid image: " + item.constructor.name + "\n");
+            // Error message for invalid object type
             continue;
         }
 
@@ -44,7 +43,6 @@ if (app.selection.length === 0) {
 
         // Skip if there is no valid link
         if (!link) {
-            // debugFile.writeln("Error: No valid link for the selected image: " + graphic.name + "\n");
             continue;
         }
 
@@ -58,7 +56,7 @@ if (app.selection.length === 0) {
             pageNumber = graphic.parentPage.documentOffset + 1;
             // debugFile.writeln("Page number of the image: " + pageNumber);
         } catch (e) {
-            // debugFile.writeln("Error: The image '" + file.name + "' is not on a regular page.\n");
+            // Skip if the image is not on a regular page
             continue;
         }
 
@@ -83,27 +81,16 @@ if (app.selection.length === 0) {
             // Add prefix only if it does not already exist
             newFileName = desiredPrefix + fileName;
         } else {
-            // Prefix already exists, use file name as is
-            newFileName = fileName;
-        }
-
-        // debugFile.writeln("New file name (after adding prefix): " + newFileName);
-
-        var newFilePath = file.path + "/" + newFileName;
-        // debugFile.writeln("New file path: " + newFilePath);
-
-        // Check if the file has already been renamed and is in our tracking list
-        if (renamedFiles[link.id]) {
-            // debugFile.writeln("File has already been renamed, updating link.\n");
-            link.relink(new File(renamedFiles[link.id]));
-            link.update();
+            // Prefix already exists, skip without feedback
             continue;
         }
+
+        var newFilePath = file.path + "/" + newFileName;
 
         // Check if a file with the new name already exists
         var newFile = new File(newFilePath);
         if (newFile.exists) {
-            // debugFile.writeln("Warning: The file '" + newFileName + "' already exists. Skipping.\n");
+            // Skip if the file already exists
             continue;
         }
 
@@ -111,7 +98,6 @@ if (app.selection.length === 0) {
         var success = file.copy(newFilePath);
         if (success) {
             file.remove(); // Delete the original file
-            // debugFile.writeln("Success: File renamed to: " + newFileName);
 
             // Update link in the InDesign document
             link.relink(newFile);
@@ -120,11 +106,11 @@ if (app.selection.length === 0) {
             // Save renamed file path
             renamedFiles[link.id] = newFilePath;
         } else {
-            // debugFile.writeln("Error: Could not rename file: " + file.name + "\n");
+            // Alert if the file could not be renamed
+            alert("Error: Could not rename file: " + file.name);
         }
     }
 }
 
 // Close the debug file
 // debugFile.close();
-alert("Processing complete.");
