@@ -1,4 +1,4 @@
-# InDesign Image Renamer Script
+# InDesign Image Page Number Renamer Script
 
 This script renames linked image files in Adobe InDesign based on the page number. It adds a prefix in the format "Page_XXXX - " (where "XXXX" is the zero-padded page number) to the file name. 
 
